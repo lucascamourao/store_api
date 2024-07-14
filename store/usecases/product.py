@@ -16,7 +16,7 @@ class ProductUsecase:
         self.collection = self.database.get_collection("products")
 
     async def create(self, body: ProductIn) -> ProductOut:
-        # Check if a product with the same name and different price exists
+        # Check if a product with the same name but a different price exists
         existing_product = await self.collection.find_one(
             {"name": body.name, "price": {"$ne": body.price}}
         )
@@ -26,7 +26,11 @@ class ProductUsecase:
             )
 
         product_model = ProductModel(**body.model_dump())
-        await self.collection.insert_one(product_model.model_dump())
+        # Create: Map an exception in case an insertion error occurs and capture it in the controller
+        try:
+            await self.collection.insert_one(product_model.model_dump())
+        except pymongo.errors.DuplicateKeyError:
+            raise DuplicateEntryException("Product already exists! ")
 
         return ProductOut(**product_model.model_dump())
 
