@@ -186,3 +186,7 @@ We will use Pyenv + Poetry, follow the link below for setting up the environment
 [mongo-motor](https://motor.readthedocs.io/en/stable/)
 
 [pytest](https://docs.pytest.org/en/7.4.x/)
+
+## Note
+This is a fork from the [original DIO store_api project](https://github.com/digitalinnovationone/store_api). The project is from the Python AI Backend Developer Bootcamp [(DIO)](https://www.dio.me/). <br/>
+The API was coded throughout the course and I only made the modifications needed for the challenge. 
