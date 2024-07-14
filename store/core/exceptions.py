@@ -8,3 +8,8 @@ class BaseException(Exception):
 
 class NotFoundException(BaseException):
     message = "Not Found"
+
+
+# Create: Map an exception in case an insertion error occurs and capture it in the controller
+class DuplicateEntryException(BaseException):
+    message = "Duplicate Entry"
