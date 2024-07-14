@@ -13,7 +13,11 @@ router = APIRouter(tags=["products"])
 async def post(
     body: ProductIn = Body(...), usecase: ProductUsecase = Depends()
 ) -> ProductOut:
-    return await usecase.create(body=body)
+    # Create: Map an exception in case an insertion error occurs and capture it in the controller
+    try:
+        return await usecase.create(body=body)
+    except DuplicateEntryException as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=exc.message)
 
 
 @router.get(path="/{id}", status_code=status.HTTP_200_OK)
