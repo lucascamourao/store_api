@@ -5,7 +5,7 @@ import pymongo
 from store.db.mongo import db_client
 from store.models.product import ProductModel
 from store.schemas.product import ProductIn, ProductOut, ProductUpdate, ProductUpdateOut
-from store.core.exceptions import NotFoundException
+from store.core.exceptions import DuplicateEntryException, NotFoundException
 
 
 class ProductUsecase:
@@ -16,7 +16,11 @@ class ProductUsecase:
 
     async def create(self, body: ProductIn) -> ProductOut:
         product_model = ProductModel(**body.model_dump())
-        await self.collection.insert_one(product_model.model_dump())
+        # Create: Map an exception in case an insertion error occurs and capture it in the controller
+        try:
+            await self.collection.insert_one(product_model.model_dump())
+        except pymongo.errors.DuplicateKeyError:
+            raise DuplicateEntryException("Product already exists! ")
 
         return ProductOut(**product_model.model_dump())
 
