@@ -23,6 +23,19 @@ async def test_controller_create_should_return_success(client, products_url):
     }
 
 
+# Create: Map an exception in case an insertion error occurs and capture it in the controller
+async def test_controller_create_should_return_duplicate_error(client, products_url):
+    product = product_data()
+    # Create the product the first time
+    await client.post(products_url, json=product)
+
+    # Try to create the same product again to trigger the duplicate error
+    response = await client.post(products_url, json=product)
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
+    assert response.json() == {"detail": "Product already exists"}
+
+
 async def test_controller_get_should_return_success(
     client, products_url, product_inserted
 ):
